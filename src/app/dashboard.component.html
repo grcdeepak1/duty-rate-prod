@@ -1,0 +1,82 @@
+<p class="lead center_div">Use our search tools to lookup HS codes and tariff rates for imports and exports</p>
+<div class="jumbotron">
+<form (ngSubmit)="search(searchParams)" #searchForm="ngForm" class="center_div">
+  <fieldset>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label" for="toCountry">Export Country</label>
+      <div class="col-sm-6">
+      <select class="form-control" #toCountry required [(ngModel)]="searchParams.to" name="to">
+        <option selected disabled hidden style='display: none' value=''>Select</option>
+        <option *ngFor="let country of countries" [ngValue]="country.name">
+            {{country.name}}
+        </option>
+      </select>
+      </div>
+    </div>
+
+  <br>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label" for="fromCountry">Import Country</label>
+      <div class="col-sm-6">
+      <select class="form-control" #fromCountry required [(ngModel)]="searchParams.from" name="from">
+        <option selected disabled hidden style='display: none' value=''>Select</option>
+        <option *ngFor="let country of countries" [ngValue]="country.name">
+            {{country.name}}
+        </option>
+      </select>
+      </div>
+    </div>
+
+    <br>
+    <div class="form-group row">
+    <label class="col-sm-3 col-form-label" for="productDesc">Product Description</label>
+    <div class="col-sm-6">
+      <input class="form-control"
+              type="search"
+             id="productDesc"
+             placeholder="Eg. Chocolate"
+             #productDesc='ngModel'
+             [(ngModel)]="searchParams.term"
+             name="productDesc"
+             required>
+      </div>
+    </div>
+
+    <div [hidden]="productDesc.valid || productDesc.pristine" class='alert alert-danger'>
+      search text is required
+    </div>
+    <div [hidden]="!searchForm.valid || customValidCheck(searchParams)" class='alert alert-danger'>
+      Either Export or Import Country must be United States
+    </div>
+    <br>
+
+    <div class="row justify-content-md-center">
+    <button [disabled]="!searchForm.form.valid || !customValidCheck(searchParams)" class="btn btn-primary btn-lg ">Search</button>
+    </div>
+  </fieldset>
+</form>
+</div>
+
+<p *ngIf="lastSearch.term != ''">Duty Rate Search Results for "{{ lastSearch.term }}" from "{{ lastSearch.from }}" to "{{ lastSearch.to }}"</p>
+<div *ngIf="dutyrates.length > 0">
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>HS Code</th>
+      <th>Product Description</th>
+      <th>Tariff Rate</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let dutyrate of dutyrates">
+      <td>{{dutyrate.hs_6}}</td>
+      <td>{{dutyrate.subheading_description}}</td>
+      <td>{{dutyrate.annual_rates["y2017"] == null ? 0.0000 : dutyrate.annual_rates["y2017"]}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="lastSearch.term != '' && searchDone && dutyrates.length == 0">
+  <p class="text-danger">No results found for the above product description</p>
+</div>
+
