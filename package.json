@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "engines": {
-    "node": "5.9.1"
+    "node": ">=4.5"
   },
   "dependencies": {
     "ejs": "2.4.1",
